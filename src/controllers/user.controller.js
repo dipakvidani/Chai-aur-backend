@@ -80,13 +80,12 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
     const user = await User.create({
-        username,
         fullName,
         avatar: avatar.url,
         coverImage: coverImage?.url || "",
         email,
         password,
-        username: username.toLowerCase()
+        username: username ? username.toLowerCase() : undefined
     })
 
     const createdUser = await User.findById(user._id).select(
@@ -164,6 +163,14 @@ const loginUser = asyncHandler(async (req, res) => {
 
 
 const logoutUser = asyncHandler(async (req, res) => {
+
+    const user = await User.findById(req.user._id)
+    if (!user) {
+        throw new ApiError(404, "User Not Found")
+    }
+    // console.log("user",user);
+    
+
     User.findByIdAndUpdate(
         req.user._id,
         {
@@ -181,8 +188,8 @@ const logoutUser = asyncHandler(async (req, res) => {
     }
 
     return res.status(200)
-        .clearCookie("accessToken", accessToken, options)
-        .clearCookie("refreshToken", refreshToken, options)
+        .clearCookie("accessToken", options)
+        .clearCookie("refreshToken", options)
         .json(new ApiResponse(200, {}, "User loggedout"))
 })
 
