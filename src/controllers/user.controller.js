@@ -20,8 +20,8 @@ const genrateAccessAndRefreshTokens = async (userId) => {
         return { refreshToken, accessToken }
 
     } catch (error) {
-        console.log("Error in genrateAccessAndRefreshTokens",error);
-        throw new ApiError(500,  "Something Went Wrong While Genrating Acess Token")
+        console.log("Error in genrateAccessAndRefreshTokens", error);
+        throw new ApiError(500, "Something Went Wrong While Genrating Acess Token")
 
     }
 }
@@ -174,8 +174,8 @@ const logoutUser = asyncHandler(async (req, res) => {
     User.findByIdAndUpdate(
         req.user._id,
         {
-            $set: {
-                refreshToken: undefined
+            $unset: {
+                refreshToken: 1
             }
         }, {
         new: true
@@ -461,25 +461,25 @@ const getWatchHistory = asyncHandler(async (req, res) => {
                     pipeline: [
                         {
                             $lookup: {
-                                from:"users",
-                                localField:"owner",
-                                foreignField:"_id",
-                                as:"owner",
-                                pipeline:[
+                                from: "users",
+                                localField: "owner",
+                                foreignField: "_id",
+                                as: "owner",
+                                pipeline: [
                                     {
-                                        $project:{
-                                            username:1,
-                                            fullName:1,
-                                            avatar:1
+                                        $project: {
+                                            username: 1,
+                                            fullName: 1,
+                                            avatar: 1
                                         }
                                     }
                                 ]
                             }
                         },
                         {
-                            $addFields:{
-                                owner:{
-                                    $first:"$owner"
+                            $addFields: {
+                                owner: {
+                                    $first: "$owner"
                                 }
                             }
                         }
@@ -490,14 +490,14 @@ const getWatchHistory = asyncHandler(async (req, res) => {
     )
 
     return res
-    .status(200)
-    .json(
-        new ApiResponse(
-            200,
-            user[0].watchHistory,
-            "Watch History Fetched Successfully"
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                user[0].watchHistory,
+                "Watch History Fetched Successfully"
+            )
         )
-    )
 })
 
 
