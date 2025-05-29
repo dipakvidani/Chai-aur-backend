@@ -20,8 +20,8 @@ const genrateAccessAndRefreshTokens = async (userId) => {
         return { refreshToken, accessToken }
 
     } catch (error) {
-
-        throw new ApiError(500, "Something Went Wrong While Genrating Acess Token")
+        console.log("Error in genrateAccessAndRefreshTokens",error);
+        throw new ApiError(500,  "Something Went Wrong While Genrating Acess Token")
 
     }
 }
